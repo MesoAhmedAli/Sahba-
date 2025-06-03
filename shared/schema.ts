@@ -212,6 +212,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   activityVotes: many(activityVotes),
   uploadedPhotos: many(eventPhotos),
   planningItems: many(planningItems),
+  phoneNumbers: many(userPhoneNumbers),
 }));
 
 export const groupsRelations = relations(groups, ({ one, many }) => ({
@@ -247,6 +248,7 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
   activitySuggestions: many(eventActivitySuggestions),
   photos: many(eventPhotos),
   planningItems: many(planningItems),
+  weddingDetails: many(weddingDetails),
 }));
 
 export const eventRsvpsRelations = relations(eventRsvps, ({ one }) => ({
@@ -317,6 +319,37 @@ export const planningItemsRelations = relations(planningItems, ({ one }) => ({
   }),
 }));
 
+// Wedding relations
+export const weddingDetailsRelations = relations(weddingDetails, ({ one, many }) => ({
+  event: one(events, {
+    fields: [weddingDetails.eventId],
+    references: [events.id],
+  }),
+  vendors: many(weddingVendors),
+  guests: many(weddingGuests),
+}));
+
+export const weddingVendorsRelations = relations(weddingVendors, ({ one }) => ({
+  wedding: one(weddingDetails, {
+    fields: [weddingVendors.weddingId],
+    references: [weddingDetails.id],
+  }),
+}));
+
+export const weddingGuestsRelations = relations(weddingGuests, ({ one }) => ({
+  wedding: one(weddingDetails, {
+    fields: [weddingGuests.weddingId],
+    references: [weddingDetails.id],
+  }),
+}));
+
+export const userPhoneNumbersRelations = relations(userPhoneNumbers, ({ one }) => ({
+  user: one(users, {
+    fields: [userPhoneNumbers.userId],
+    references: [users.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
@@ -359,6 +392,57 @@ export const insertPlanningItemSchema = createInsertSchema(planningItems).pick({
   priority: true,
 });
 
+export const insertWeddingDetailsSchema = createInsertSchema(weddingDetails).pick({
+  eventId: true,
+  brideFirstName: true,
+  brideLastName: true,
+  groomFirstName: true,
+  groomLastName: true,
+  ceremonyLocation: true,
+  receptionLocation: true,
+  weddingDate: true,
+  ceremonyTime: true,
+  receptionTime: true,
+  budget: true,
+  guestCount: true,
+  theme: true,
+  colorScheme: true,
+});
+
+export const insertWeddingVendorSchema = createInsertSchema(weddingVendors).pick({
+  weddingId: true,
+  category: true,
+  name: true,
+  contactPerson: true,
+  phoneNumber: true,
+  email: true,
+  website: true,
+  cost: true,
+  status: true,
+  notes: true,
+});
+
+export const insertWeddingGuestSchema = createInsertSchema(weddingGuests).pick({
+  weddingId: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  phoneNumber: true,
+  relationship: true,
+  side: true,
+  plusOne: true,
+  dietaryRestrictions: true,
+  table: true,
+});
+
+export const insertUserPhoneNumberSchema = createInsertSchema(userPhoneNumbers).pick({
+  userId: true,
+  phoneNumber: true,
+  countryCode: true,
+  isWhatsApp: true,
+  isPrimary: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -375,3 +459,11 @@ export type EventPhoto = typeof eventPhotos.$inferSelect;
 export type PlanningItem = typeof planningItems.$inferSelect;
 export type InsertPlanningItem = z.infer<typeof insertPlanningItemSchema>;
 export type GroupMember = typeof groupMembers.$inferSelect;
+export type WeddingDetails = typeof weddingDetails.$inferSelect;
+export type InsertWeddingDetails = z.infer<typeof insertWeddingDetailsSchema>;
+export type WeddingVendor = typeof weddingVendors.$inferSelect;
+export type InsertWeddingVendor = z.infer<typeof insertWeddingVendorSchema>;
+export type WeddingGuest = typeof weddingGuests.$inferSelect;
+export type InsertWeddingGuest = z.infer<typeof insertWeddingGuestSchema>;
+export type UserPhoneNumber = typeof userPhoneNumbers.$inferSelect;
+export type InsertUserPhoneNumber = z.infer<typeof insertUserPhoneNumberSchema>;

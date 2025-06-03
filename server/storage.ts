@@ -9,6 +9,10 @@ import {
   activityVotes,
   eventPhotos,
   planningItems,
+  weddingDetails,
+  weddingVendors,
+  weddingGuests,
+  userPhoneNumbers,
   type User,
   type UpsertUser,
   type Group,
@@ -24,6 +28,14 @@ import {
   type PlanningItem,
   type InsertPlanningItem,
   type GroupMember,
+  type WeddingDetails,
+  type InsertWeddingDetails,
+  type WeddingVendor,
+  type InsertWeddingVendor,
+  type WeddingGuest,
+  type InsertWeddingGuest,
+  type UserPhoneNumber,
+  type InsertUserPhoneNumber,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, sql, inArray } from "drizzle-orm";
@@ -57,6 +69,22 @@ export interface IStorage {
   createPlanningItem(item: InsertPlanningItem, createdBy: string): Promise<PlanningItem>;
   getPlanningItems(eventId: string): Promise<PlanningItem[]>;
   updatePlanningItem(id: string, updates: Partial<PlanningItem>): Promise<PlanningItem>;
+  
+  // Wedding operations
+  createWeddingDetails(wedding: InsertWeddingDetails): Promise<WeddingDetails>;
+  getWeddingDetails(eventId: string): Promise<WeddingDetails | undefined>;
+  updateWeddingDetails(id: string, updates: Partial<WeddingDetails>): Promise<WeddingDetails>;
+  addWeddingVendor(vendor: InsertWeddingVendor): Promise<WeddingVendor>;
+  getWeddingVendors(weddingId: string): Promise<WeddingVendor[]>;
+  updateWeddingVendor(id: string, updates: Partial<WeddingVendor>): Promise<WeddingVendor>;
+  addWeddingGuest(guest: InsertWeddingGuest): Promise<WeddingGuest>;
+  getWeddingGuests(weddingId: string): Promise<WeddingGuest[]>;
+  updateWeddingGuest(id: string, updates: Partial<WeddingGuest>): Promise<WeddingGuest>;
+  
+  // Phone number operations
+  addUserPhoneNumber(phoneNumber: InsertUserPhoneNumber): Promise<UserPhoneNumber>;
+  getUserPhoneNumbers(userId: string): Promise<UserPhoneNumber[]>;
+  updateUserPhoneNumber(id: string, updates: Partial<UserPhoneNumber>): Promise<UserPhoneNumber>;
   
   // Stats
   getUserStats(userId: string): Promise<{ upcomingEvents: number; friendGroups: number }>;
@@ -290,6 +318,108 @@ export class DatabaseStorage implements IStorage {
       .where(eq(planningItems.id, id))
       .returning();
     return updatedItem;
+  }
+
+  // Wedding operations
+  async createWeddingDetails(wedding: InsertWeddingDetails): Promise<WeddingDetails> {
+    const [newWedding] = await db
+      .insert(weddingDetails)
+      .values(wedding)
+      .returning();
+    return newWedding;
+  }
+
+  async getWeddingDetails(eventId: string): Promise<WeddingDetails | undefined> {
+    const [wedding] = await db
+      .select()
+      .from(weddingDetails)
+      .where(eq(weddingDetails.eventId, eventId));
+    return wedding;
+  }
+
+  async updateWeddingDetails(id: string, updates: Partial<WeddingDetails>): Promise<WeddingDetails> {
+    const [wedding] = await db
+      .update(weddingDetails)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(weddingDetails.id, id))
+      .returning();
+    return wedding;
+  }
+
+  async addWeddingVendor(vendor: InsertWeddingVendor): Promise<WeddingVendor> {
+    const [newVendor] = await db
+      .insert(weddingVendors)
+      .values(vendor)
+      .returning();
+    return newVendor;
+  }
+
+  async getWeddingVendors(weddingId: string): Promise<WeddingVendor[]> {
+    return db
+      .select()
+      .from(weddingVendors)
+      .where(eq(weddingVendors.weddingId, weddingId))
+      .orderBy(desc(weddingVendors.createdAt));
+  }
+
+  async updateWeddingVendor(id: string, updates: Partial<WeddingVendor>): Promise<WeddingVendor> {
+    const [vendor] = await db
+      .update(weddingVendors)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(weddingVendors.id, id))
+      .returning();
+    return vendor;
+  }
+
+  async addWeddingGuest(guest: InsertWeddingGuest): Promise<WeddingGuest> {
+    const [newGuest] = await db
+      .insert(weddingGuests)
+      .values(guest)
+      .returning();
+    return newGuest;
+  }
+
+  async getWeddingGuests(weddingId: string): Promise<WeddingGuest[]> {
+    return db
+      .select()
+      .from(weddingGuests)
+      .where(eq(weddingGuests.weddingId, weddingId))
+      .orderBy(desc(weddingGuests.createdAt));
+  }
+
+  async updateWeddingGuest(id: string, updates: Partial<WeddingGuest>): Promise<WeddingGuest> {
+    const [guest] = await db
+      .update(weddingGuests)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(weddingGuests.id, id))
+      .returning();
+    return guest;
+  }
+
+  // Phone number operations
+  async addUserPhoneNumber(phoneNumber: InsertUserPhoneNumber): Promise<UserPhoneNumber> {
+    const [newPhoneNumber] = await db
+      .insert(userPhoneNumbers)
+      .values(phoneNumber)
+      .returning();
+    return newPhoneNumber;
+  }
+
+  async getUserPhoneNumbers(userId: string): Promise<UserPhoneNumber[]> {
+    return db
+      .select()
+      .from(userPhoneNumbers)
+      .where(eq(userPhoneNumbers.userId, userId))
+      .orderBy(desc(userPhoneNumbers.isPrimary));
+  }
+
+  async updateUserPhoneNumber(id: string, updates: Partial<UserPhoneNumber>): Promise<UserPhoneNumber> {
+    const [phoneNumber] = await db
+      .update(userPhoneNumbers)
+      .set(updates)
+      .where(eq(userPhoneNumbers.id, id))
+      .returning();
+    return phoneNumber;
   }
 
   // Stats
