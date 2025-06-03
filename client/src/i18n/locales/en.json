@@ -99,6 +99,8 @@
     "hero": "Plan Amazing Events with Friends",
     "subtitle": "Create unforgettable moments with your friends. From spontaneous hangouts to epic adventures, Sahba makes planning fun and collaborative.",
     "features": {
+      "title": "Everything you need to plan together",
+      "subtitle": "Powerful features designed for social planning",
       "scheduling": {
         "title": "Smart Scheduling",
         "description": "Find the perfect time that works for everyone in your group with intelligent scheduling."

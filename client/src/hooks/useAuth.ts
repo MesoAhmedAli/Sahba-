@@ -1,23 +1,34 @@
 import { useState, useEffect } from "react";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 
+// Temporary authentication for testing until Firebase is configured
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
+    // Check for stored auth state
+    const storedAuth = localStorage.getItem('tempAuth');
+    if (storedAuth) {
+      setUser(JSON.parse(storedAuth));
+    }
+    setIsLoading(false);
   }, []);
+
+  const login = (userData: any) => {
+    setUser(userData);
+    localStorage.setItem('tempAuth', JSON.stringify(userData));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('tempAuth');
+  };
 
   return {
     user,
     isLoading,
     isAuthenticated: !!user,
+    login,
+    logout,
   };
 }
