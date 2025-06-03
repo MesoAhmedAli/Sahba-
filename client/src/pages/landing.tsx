@@ -2,22 +2,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Users, Lightbulb, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/hooks/useAuth";
+import { loginWithGoogle } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
 import LanguageSwitcher from "@/components/language-switcher";
 
 export default function Landing() {
   const { t } = useTranslation();
-  const { login } = useAuth();
+  const { toast } = useToast();
   
-  const handleLogin = () => {
-    // Temporary demo login
-    login({
-      id: 'demo-user',
-      email: 'demo@sahba.com',
-      displayName: 'Demo User',
-      firstName: 'Demo',
-      lastName: 'User'
-    });
+  const handleLogin = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      toast({
+        title: "Authentication Error",
+        description: error.message || "Login failed. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (

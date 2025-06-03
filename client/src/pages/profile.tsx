@@ -3,15 +3,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
+import { logout } from "@/lib/firebase";
 import Navigation from "@/components/navigation";
 import { User, LogOut, Settings, Bell, Shield } from "lucide-react";
 
 export default function Profile() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { t } = useTranslation();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
@@ -30,9 +35,9 @@ export default function Profile() {
           <Card>
             <CardHeader>
               <div className="flex items-center space-x-4">
-                {user?.profileImageUrl ? (
+                {user?.photoURL ? (
                   <img 
-                    src={user.profileImageUrl} 
+                    src={user.photoURL} 
                     alt="Profile" 
                     className="w-16 h-16 rounded-full object-cover border-4 border-gray-100"
                   />
@@ -43,10 +48,7 @@ export default function Profile() {
                 )}
                 <div>
                   <CardTitle className="text-xl">
-                    {user?.firstName && user?.lastName 
-                      ? `${user.firstName} ${user.lastName}`
-                      : user?.firstName || "User"
-                    }
+                    {user?.displayName || "User"}
                   </CardTitle>
                   <CardDescription>
                     {user?.email || "No email provided"}
