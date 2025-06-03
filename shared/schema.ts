@@ -137,6 +137,71 @@ export const planningItems = pgTable("planning_items", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Wedding-specific tables
+export const weddingDetails = pgTable("wedding_details", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventId: uuid("event_id").notNull().references(() => events.id, { onDelete: "cascade" }),
+  brideFirstName: varchar("bride_first_name", { length: 100 }),
+  brideLastName: varchar("bride_last_name", { length: 100 }),
+  groomFirstName: varchar("groom_first_name", { length: 100 }),
+  groomLastName: varchar("groom_last_name", { length: 100 }),
+  ceremonyLocation: varchar("ceremony_location", { length: 500 }),
+  receptionLocation: varchar("reception_location", { length: 500 }),
+  weddingDate: timestamp("wedding_date").notNull(),
+  ceremonyTime: varchar("ceremony_time", { length: 10 }),
+  receptionTime: varchar("reception_time", { length: 10 }),
+  budget: integer("budget"),
+  guestCount: integer("guest_count"),
+  theme: varchar("theme", { length: 100 }),
+  colorScheme: varchar("color_scheme", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const weddingVendors = pgTable("wedding_vendors", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  weddingId: uuid("wedding_id").notNull().references(() => weddingDetails.id, { onDelete: "cascade" }),
+  category: varchar("category", { length: 50 }).notNull(), // 'photographer', 'florist', 'caterer', 'dj', etc.
+  name: varchar("name", { length: 255 }).notNull(),
+  contactPerson: varchar("contact_person", { length: 255 }),
+  phoneNumber: varchar("phone_number", { length: 20 }),
+  email: varchar("email", { length: 255 }),
+  website: varchar("website", { length: 500 }),
+  cost: integer("cost"),
+  status: varchar("status", { length: 20 }).default("considering"), // 'considering', 'booked', 'rejected'
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const weddingGuests = pgTable("wedding_guests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  weddingId: uuid("wedding_id").notNull().references(() => weddingDetails.id, { onDelete: "cascade" }),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }),
+  email: varchar("email", { length: 255 }),
+  phoneNumber: varchar("phone_number", { length: 20 }),
+  relationship: varchar("relationship", { length: 50 }), // 'family', 'friend', 'colleague', etc.
+  side: varchar("side", { length: 10 }), // 'bride', 'groom', 'both'
+  inviteStatus: varchar("invite_status", { length: 20 }).default("not_sent"), // 'not_sent', 'sent', 'delivered'
+  rsvpStatus: varchar("rsvp_status", { length: 20 }), // 'pending', 'attending', 'not_attending'
+  plusOne: boolean("plus_one").default(false),
+  dietaryRestrictions: text("dietary_restrictions"),
+  table: varchar("table", { length: 50 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const userPhoneNumbers = pgTable("user_phone_numbers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  phoneNumber: varchar("phone_number", { length: 20 }).notNull(),
+  countryCode: varchar("country_code", { length: 5 }).default("+1"),
+  isWhatsApp: boolean("is_whatsapp").default(false),
+  isPrimary: boolean("is_primary").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   createdGroups: many(groups),

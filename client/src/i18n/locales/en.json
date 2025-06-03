@@ -1,0 +1,125 @@
+{
+  "app": {
+    "name": "Sahba",
+    "tagline": "Making social planning effortless and fun"
+  },
+  "auth": {
+    "getStarted": "Get Started",
+    "startPlanning": "Start Planning Together",
+    "loginWithGoogle": "Login with Google",
+    "logout": "Sign Out"
+  },
+  "navigation": {
+    "home": "Home",
+    "events": "Events",
+    "groups": "Groups",
+    "profile": "Profile"
+  },
+  "home": {
+    "welcome": "Good morning, {{name}}!",
+    "upcomingEvents": "You have {{count}} upcoming events this week",
+    "upcomingEventsTitle": "Upcoming Events",
+    "activitySuggestions": "Activity Suggestions",
+    "yourGroups": "Your Groups",
+    "stats": {
+      "upcomingEvents": "Upcoming Events",
+      "friendGroups": "Friend Groups"
+    }
+  },
+  "events": {
+    "title": "Events",
+    "subtitle": "Manage your upcoming and past events",
+    "newEvent": "New Event",
+    "createEvent": "Create Event",
+    "upcomingEvents": "Upcoming Events",
+    "pastEvents": "Past Events",
+    "noUpcomingEvents": "No upcoming events",
+    "noUpcomingEventsDesc": "Create your first event or wait for friends to invite you!",
+    "eventDetails": "Event Details"
+  },
+  "groups": {
+    "title": "Groups",
+    "subtitle": "Manage your friend groups and connections",
+    "newGroup": "New Group",
+    "createGroup": "Create New Group",
+    "groupName": "Group Name",
+    "description": "Description (Optional)",
+    "createGroupDesc": "Create a group to organize events with your friends",
+    "noGroups": "No groups yet",
+    "noGroupsDesc": "Create your first group to start organizing events with friends!"
+  },
+  "wedding": {
+    "title": "Wedding Planning",
+    "subtitle": "Plan your perfect wedding day",
+    "ceremonies": "Ceremonies",
+    "reception": "Reception",
+    "vendors": "Vendors",
+    "guests": "Guest List",
+    "budget": "Budget",
+    "timeline": "Timeline",
+    "checklist": "Checklist",
+    "invitations": "Invitations"
+  },
+  "messaging": {
+    "sendWhatsApp": "Send WhatsApp",
+    "sendSMS": "Send SMS",
+    "invite": "Invite",
+    "reminder": "Send Reminder",
+    "messageToGroup": "Message Group"
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your account and preferences",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "language": "Language",
+    "account": "Account",
+    "version": "Version 1.0.0"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "create": "Create",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "going": "Going",
+    "maybe": "Maybe",
+    "notGoing": "Can't Go",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "configure": "Configure",
+    "manage": "Manage"
+  },
+  "landing": {
+    "hero": "Plan Amazing Events with Friends",
+    "subtitle": "Create unforgettable moments with your friends. From spontaneous hangouts to epic adventures, Sahba makes planning fun and collaborative.",
+    "features": {
+      "scheduling": {
+        "title": "Smart Scheduling",
+        "description": "Find the perfect time that works for everyone in your group with intelligent scheduling."
+      },
+      "groups": {
+        "title": "Friend Groups",
+        "description": "Organize your friends into groups and make planning for different crowds effortless."
+      },
+      "activities": {
+        "title": "Activity Ideas",
+        "description": "Get creative suggestions for activities based on your group size, location, and interests."
+      },
+      "realtime": {
+        "title": "Real-time Planning",
+        "description": "Collaborate live with your friends on planning boards and see updates in real-time."
+      }
+    },
+    "cta": {
+      "title": "Ready to make planning fun again?",
+      "subtitle": "Join thousands of friends who are already planning amazing events together.",
+      "button": "Get Started Free"
+    }
+  }
+}
