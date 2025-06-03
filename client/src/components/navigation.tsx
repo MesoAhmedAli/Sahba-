@@ -1,5 +1,5 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Bell } from "lucide-react";
+import { Bell, Home, Calendar, Users, User, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
@@ -46,7 +46,7 @@ export default function Navigation() {
                 isActive("/") ? "text-indigo-600" : "text-gray-400 hover:text-indigo-600"
               } transition-colors`}
             >
-              <i className="fas fa-home text-lg mb-1"></i>
+              <Home className="w-5 h-5 mb-1" />
               <span className="text-xs font-medium">{t('navigation.home')}</span>
             </Button>
           </Link>
@@ -58,7 +58,7 @@ export default function Navigation() {
                 isActive("/events") ? "text-indigo-600" : "text-gray-400 hover:text-indigo-600"
               } transition-colors`}
             >
-              <i className="fas fa-calendar text-lg mb-1"></i>
+              <Calendar className="w-5 h-5 mb-1" />
               <span className="text-xs">{t('navigation.events')}</span>
             </Button>
           </Link>
@@ -70,7 +70,7 @@ export default function Navigation() {
                 isActive("/groups") ? "text-indigo-600" : "text-gray-400 hover:text-indigo-600"
               } transition-colors`}
             >
-              <i className="fas fa-users text-lg mb-1"></i>
+              <Users className="w-5 h-5 mb-1" />
               <span className="text-xs">{t('navigation.groups')}</span>
             </Button>
           </Link>
@@ -82,7 +82,7 @@ export default function Navigation() {
                 isActive("/profile") ? "text-indigo-600" : "text-gray-400 hover:text-indigo-600"
               } transition-colors`}
             >
-              <i className="fas fa-user text-lg mb-1"></i>
+              <User className="w-5 h-5 mb-1" />
               <span className="text-xs">{t('navigation.profile')}</span>
             </Button>
           </Link>

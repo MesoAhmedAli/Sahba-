@@ -1,26 +1,17 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDays, Users, Lightbulb, MessageCircle } from "lucide-react";
+import { CalendarDays, Users, Lightbulb, MessageCircle, Sparkles, Heart, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { loginWithGoogle } from "@/lib/firebase";
-import { useToast } from "@/hooks/use-toast";
 import LanguageSwitcher from "@/components/language-switcher";
+import AuthModal from "@/components/auth-modal";
 
 export default function Landing() {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  
-  const handleLogin = async () => {
-    try {
-      await loginWithGoogle();
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      toast({
-        title: "Authentication Error",
-        description: error.message || "Login failed. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  const handleLogin = () => {
+    setShowAuthModal(true);
   };
 
   return (
@@ -158,6 +149,8 @@ export default function Landing() {
           <p className="text-gray-600">{t('app.tagline')}</p>
         </div>
       </footer>
+
+      <AuthModal open={showAuthModal} onOpenChange={setShowAuthModal} />
     </div>
   );
 }

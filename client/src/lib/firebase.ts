@@ -1,5 +1,14 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { 
+  getAuth, 
+  signInWithPopup, 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider, 
+  signOut,
+  sendPasswordResetEmail,
+  updateProfile
+} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,11 +21,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 
 export async function loginWithGoogle() {
   try {
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, googleProvider);
     return result.user;
   } catch (error: any) {
     console.error("Firebase Authentication Error:", error);
@@ -27,6 +36,67 @@ export async function loginWithGoogle() {
       throw new Error('Popup blocked: Please allow popups for this domain');
     } else if (error.code === 'auth/popup-closed-by-user') {
       throw new Error('Login cancelled by user');
+    }
+    
+    throw error;
+  }
+}
+
+export async function loginWithEmail(email: string, password: string) {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (error: any) {
+    console.error("Email login error:", error);
+    
+    if (error.code === 'auth/user-not-found') {
+      throw new Error('No account found with this email address');
+    } else if (error.code === 'auth/wrong-password') {
+      throw new Error('Incorrect password');
+    } else if (error.code === 'auth/invalid-email') {
+      throw new Error('Invalid email address');
+    } else if (error.code === 'auth/user-disabled') {
+      throw new Error('This account has been disabled');
+    }
+    
+    throw error;
+  }
+}
+
+export async function signUpWithEmail(email: string, password: string, displayName?: string) {
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    
+    if (displayName && result.user) {
+      await updateProfile(result.user, { displayName });
+    }
+    
+    return result.user;
+  } catch (error: any) {
+    console.error("Email signup error:", error);
+    
+    if (error.code === 'auth/email-already-in-use') {
+      throw new Error('An account with this email already exists');
+    } else if (error.code === 'auth/weak-password') {
+      throw new Error('Password should be at least 6 characters');
+    } else if (error.code === 'auth/invalid-email') {
+      throw new Error('Invalid email address');
+    }
+    
+    throw error;
+  }
+}
+
+export async function resetPassword(email: string) {
+  try {
+    await sendPasswordResetEmail(auth, email);
+  } catch (error: any) {
+    console.error("Password reset error:", error);
+    
+    if (error.code === 'auth/user-not-found') {
+      throw new Error('No account found with this email address');
+    } else if (error.code === 'auth/invalid-email') {
+      throw new Error('Invalid email address');
     }
     
     throw error;
