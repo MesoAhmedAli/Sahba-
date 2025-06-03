@@ -2,14 +2,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "react-i18next";
 import Navigation from "@/components/navigation";
 import { User, LogOut, Settings, Bell, Shield } from "lucide-react";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
-    window.location.href = "/api/logout";
+    logout();
   };
 
   return (
@@ -19,8 +21,8 @@ export default function Profile() {
       <div className="pt-16">
         {/* Header */}
         <section className="px-4 py-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Profile</h2>
-          <p className="text-gray-600">Manage your account and preferences</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('profile.title')}</h2>
+          <p className="text-gray-600">{t('profile.subtitle')}</p>
         </section>
 
         {/* Profile Info */}

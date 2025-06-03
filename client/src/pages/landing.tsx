@@ -127,10 +127,10 @@ export default function Landing() {
       <section className="px-4 py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="text-3xl font-bold text-white mb-4">
-            Ready to make planning fun again?
+            {t('landing.cta.title')}
           </h3>
           <p className="text-xl text-indigo-100 mb-8">
-            Join thousands of friends who are already planning amazing events together.
+            {t('landing.cta.subtitle')}
           </p>
           <Button 
             onClick={handleLogin}
@@ -138,7 +138,7 @@ export default function Landing() {
             variant="secondary"
             className="bg-white text-indigo-600 hover:bg-gray-50 text-lg px-8 py-3"
           >
-            Get Started Free
+            {t('landing.cta.button')}
           </Button>
         </div>
       </section>
@@ -150,9 +150,9 @@ export default function Landing() {
             <div className="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">S</span>
             </div>
-            <span className="text-lg font-semibold text-gray-900">Sahba</span>
+            <span className="text-lg font-semibold text-gray-900">{t('app.name')}</span>
           </div>
-          <p className="text-gray-600">Making social planning effortless and fun.</p>
+          <p className="text-gray-600">{t('app.tagline')}</p>
         </div>
       </footer>
     </div>
