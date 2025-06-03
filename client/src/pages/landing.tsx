@@ -1,10 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Users, Lightbulb, MessageCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { loginWithGoogle } from "@/lib/firebase";
+import LanguageSwitcher from "@/components/language-switcher";
 
 export default function Landing() {
-  const handleLogin = () => {
-    window.location.href = "/api/login";
+  const { t } = useTranslation();
+  
+  const handleLogin = async () => {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   return (
@@ -16,32 +25,31 @@ export default function Landing() {
             <div className="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-lg">S</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Sahba</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('app.name')}</h1>
           </div>
-          <Button onClick={handleLogin} className="gradient-bg text-white hover:opacity-90">
-            Get Started
-          </Button>
+          <div className="flex items-center space-x-3">
+            <LanguageSwitcher />
+            <Button onClick={handleLogin} className="gradient-bg text-white hover:opacity-90">
+              {t('auth.getStarted')}
+            </Button>
+          </div>
         </div>
       </header>
 
       {/* Hero Section */}
       <section className="px-4 py-12 text-center max-w-4xl mx-auto">
         <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-          Plan Amazing Events with{" "}
-          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Friends
-          </span>
+          {t('landing.hero')}
         </h2>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Create unforgettable moments with your friends. From spontaneous hangouts to epic adventures, 
-          Sahba makes planning fun and collaborative.
+          {t('landing.subtitle')}
         </p>
         <Button 
           onClick={handleLogin} 
           size="lg" 
           className="gradient-bg text-white hover:opacity-90 text-lg px-8 py-3"
         >
-          Start Planning Together
+          {t('auth.startPlanning')}
         </Button>
       </section>
 

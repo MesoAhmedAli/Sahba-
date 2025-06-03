@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, signInWithRedirect, GoogleAuthProvider, getRedirectResult } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,11 +14,21 @@ export const auth = getAuth(app);
 
 const provider = new GoogleAuthProvider();
 
-// Firebase authentication functions
-export function loginWithGoogle() {
-  signInWithRedirect(auth, provider);
+export async function loginWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
 }
 
-export function handleRedirectResult() {
-  return getRedirectResult(auth);
+export async function logout() {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error;
+  }
 }
