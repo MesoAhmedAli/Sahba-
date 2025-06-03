@@ -2,6 +2,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./language-switcher";
 
 export default function Navigation() {
   const { user } = useAuth();

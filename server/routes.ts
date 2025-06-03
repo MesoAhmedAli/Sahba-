@@ -9,7 +9,12 @@ import {
   insertEventRsvpSchema,
   insertActivitySuggestionSchema,
   insertPlanningItemSchema,
+  insertWeddingDetailsSchema,
+  insertWeddingVendorSchema,
+  insertWeddingGuestSchema,
+  insertUserPhoneNumberSchema,
 } from "@shared/schema";
+import { messagingService } from "./messaging";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -237,6 +242,176 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating planning item:", error);
       res.status(500).json({ message: "Failed to update planning item" });
+    }
+  });
+
+  // Wedding planning routes
+  app.post('/api/events/:id/wedding', isAuthenticated, async (req, res) => {
+    try {
+      const validatedData = insertWeddingDetailsSchema.parse({
+        ...req.body,
+        eventId: req.params.id,
+      });
+      const wedding = await storage.createWeddingDetails(validatedData);
+      res.json(wedding);
+    } catch (error) {
+      console.error("Error creating wedding details:", error);
+      res.status(500).json({ message: "Failed to create wedding details" });
+    }
+  });
+
+  app.get('/api/events/:id/wedding', isAuthenticated, async (req, res) => {
+    try {
+      const wedding = await storage.getWeddingDetails(req.params.id);
+      res.json(wedding);
+    } catch (error) {
+      console.error("Error fetching wedding details:", error);
+      res.status(500).json({ message: "Failed to fetch wedding details" });
+    }
+  });
+
+  app.patch('/api/wedding/:id', isAuthenticated, async (req, res) => {
+    try {
+      const wedding = await storage.updateWeddingDetails(req.params.id, req.body);
+      res.json(wedding);
+    } catch (error) {
+      console.error("Error updating wedding details:", error);
+      res.status(500).json({ message: "Failed to update wedding details" });
+    }
+  });
+
+  app.post('/api/wedding/:id/vendors', isAuthenticated, async (req, res) => {
+    try {
+      const validatedData = insertWeddingVendorSchema.parse({
+        ...req.body,
+        weddingId: req.params.id,
+      });
+      const vendor = await storage.addWeddingVendor(validatedData);
+      res.json(vendor);
+    } catch (error) {
+      console.error("Error adding wedding vendor:", error);
+      res.status(500).json({ message: "Failed to add wedding vendor" });
+    }
+  });
+
+  app.get('/api/wedding/:id/vendors', isAuthenticated, async (req, res) => {
+    try {
+      const vendors = await storage.getWeddingVendors(req.params.id);
+      res.json(vendors);
+    } catch (error) {
+      console.error("Error fetching wedding vendors:", error);
+      res.status(500).json({ message: "Failed to fetch wedding vendors" });
+    }
+  });
+
+  app.post('/api/wedding/:id/guests', isAuthenticated, async (req, res) => {
+    try {
+      const validatedData = insertWeddingGuestSchema.parse({
+        ...req.body,
+        weddingId: req.params.id,
+      });
+      const guest = await storage.addWeddingGuest(validatedData);
+      res.json(guest);
+    } catch (error) {
+      console.error("Error adding wedding guest:", error);
+      res.status(500).json({ message: "Failed to add wedding guest" });
+    }
+  });
+
+  app.get('/api/wedding/:id/guests', isAuthenticated, async (req, res) => {
+    try {
+      const guests = await storage.getWeddingGuests(req.params.id);
+      res.json(guests);
+    } catch (error) {
+      console.error("Error fetching wedding guests:", error);
+      res.status(500).json({ message: "Failed to fetch wedding guests" });
+    }
+  });
+
+  // Phone number routes
+  app.post('/api/user/phone-numbers', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const validatedData = insertUserPhoneNumberSchema.parse({
+        ...req.body,
+        userId,
+      });
+      const phoneNumber = await storage.addUserPhoneNumber(validatedData);
+      res.json(phoneNumber);
+    } catch (error) {
+      console.error("Error adding phone number:", error);
+      res.status(500).json({ message: "Failed to add phone number" });
+    }
+  });
+
+  app.get('/api/user/phone-numbers', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const phoneNumbers = await storage.getUserPhoneNumbers(userId);
+      res.json(phoneNumbers);
+    } catch (error) {
+      console.error("Error fetching phone numbers:", error);
+      res.status(500).json({ message: "Failed to fetch phone numbers" });
+    }
+  });
+
+  // Messaging routes
+  app.post('/api/messaging/sms', isAuthenticated, async (req, res) => {
+    try {
+      const { to, message } = req.body;
+      const success = await messagingService.sendSMS(to, message);
+      res.json({ success });
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+      res.status(500).json({ message: "Failed to send SMS" });
+    }
+  });
+
+  app.post('/api/messaging/whatsapp', isAuthenticated, async (req, res) => {
+    try {
+      const { to, message } = req.body;
+      const success = await messagingService.sendWhatsApp(to, message);
+      res.json({ success });
+    } catch (error) {
+      console.error("Error sending WhatsApp message:", error);
+      res.status(500).json({ message: "Failed to send WhatsApp message" });
+    }
+  });
+
+  app.post('/api/events/:id/invite', isAuthenticated, async (req, res) => {
+    try {
+      const { phoneNumbers } = req.body;
+      const event = await storage.getEvent(req.params.id);
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      await messagingService.sendEventInvitation(
+        phoneNumbers,
+        event.title,
+        event.startDate.toLocaleDateString(),
+        event.location || undefined
+      );
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error sending event invitations:", error);
+      res.status(500).json({ message: "Failed to send event invitations" });
+    }
+  });
+
+  app.post('/api/events/:id/reminder', isAuthenticated, async (req, res) => {
+    try {
+      const { phoneNumbers, hoursUntil } = req.body;
+      const event = await storage.getEvent(req.params.id);
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      await messagingService.sendEventReminder(phoneNumbers, event.title, hoursUntil);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error sending event reminder:", error);
+      res.status(500).json({ message: "Failed to send event reminder" });
     }
   });
 
